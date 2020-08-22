@@ -32,6 +32,12 @@ Future<Map<String, Uint8List>> selectSingleFileAsBytes(
   return loadEnded.future;
 }
 
+/// Implementation of file selection dialog for the web
+Future<String> pickSingleFileAsPath(
+    {FileTypeCross type, String fileExtension}) async {
+  throw UnimplementedError('Unsupported Platform for file_picker_cross');
+}
+
 String _fileTypeToAcceptString(FileTypeCross type, String fileExtension) {
   String accept;
   switch (type) {

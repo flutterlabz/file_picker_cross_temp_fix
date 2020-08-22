@@ -17,6 +17,16 @@ Future<Map<String, Uint8List>> selectSingleFileAsBytes(
   }
 }
 
+/// Implementation of file selection dialog delegating to platform-specific implementations
+Future<String> pickSingleFileAsPath(
+    {FileTypeCross type, String fileExtension}) async {
+  if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
+    return await saveFileMobile(type: type, fileExtension: fileExtension);
+  } else {
+    return await saveFileDesktop(type: type, fileExtension: fileExtension);
+  }
+}
+
 /// Implementation of file selection dialog using file_chooser for desktop platforms
 Future<Map<String, Uint8List>> selectFilesDesktop(
     {FileTypeCross type, String fileExtension}) async {
@@ -31,8 +41,24 @@ Future<Map<String, Uint8List>> selectFilesDesktop(
   return {path: await _readFileByte(path)};
 }
 
+/// Implementation of file selection dialog using file_chooser for desktop platforms
+Future<String> saveFileDesktop(
+    {FileTypeCross type, String fileExtension}) async {
+  FileChooserResult file = await showSavePanel(
+      allowedFileTypes: (parseExtension(fileExtension) == null)
+          ? null
+          : [
+              FileTypeFilterGroup(
+                  label: 'files', fileExtensions: parseExtension(fileExtension))
+            ]);
+  String path = file.paths.isEmpty ? "" : file.paths[0];
+  return path;
+}
+
 Future<Uint8List> _readFileByte(String filePath) async {
-  Uri myUri = Platform.isWindows ? Uri.file(filePath,windows: true) : Uri.parse(filePath);
+  Uri myUri = Platform.isWindows
+      ? Uri.file(filePath, windows: true)
+      : Uri.parse(filePath);
   File audioFile = new File.fromUri(myUri);
   Uint8List bytes;
   await audioFile.readAsBytes().then((value) {
@@ -50,6 +76,11 @@ Future<Map<String, Uint8List>> selectFilesMobile(
       type: _fileTypeCrossParse(type),
       allowedExtensions: parseExtension(fileExtension));
   return {file.path: file.readAsBytesSync()};
+}
+
+Future<String> saveFileMobile(
+    {FileTypeCross type, String fileExtension}) async {
+  throw UnimplementedError('Unsupported Platform for file_picker_cross');
 }
 
 /// Parsing various valid HTML/JS file type declarations into valid ones for file_picker

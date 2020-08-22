@@ -41,6 +41,17 @@ class FilePickerCross {
         path: _path, fileExtension: fileExtension, type: type);
   }
 
+  /// Shows a dialog for selecting a file to save to.
+  static Future<FilePickerCross> save(
+      {FileTypeCross type = FileTypeCross.any,
+      String fileExtension = ''}) async {
+    final String path =
+        await pickSingleFileAsPath(type: type, fileExtension: fileExtension);
+
+    return FilePickerCross(null,
+        path: path, fileExtension: fileExtension, type: type);
+  }
+
   /// Returns a sting containing the file contents of plain text files. Please use it in a try {} catch (e) {} block if you are unsure if the opened file is plain text.
   String toString() => Utf8Codec().decode(_bytes);
 
