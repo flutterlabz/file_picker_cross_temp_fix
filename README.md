@@ -6,11 +6,18 @@
 
 `file_picker_cross` allows you to select files from your device and is compatible with Android, iOS, Desktops (using both go-flutter or FDE) and the web.
 
+It also supports picking a file path for saving/export. This functionality is currently only available on Desktops.
+
 This package was realized using `file_picker` (Mobile platforms and go-flutter) and 'file_chooser' (Desktops). We only added compatibility to the web and mixed everything.
 
 **Note:** *we recently had API changes. Please update your code accordingly.*
 ```dart
 FilePickerCross FilePickerCross.pick(
+    type: FileTypeCross.any,                        // Available: `any`, `audio`, `image`, `video`, `custom`. Note: not available using FDE
+    fileExtension: ''                               // Only if FileTypeCross.custom . May be any file extension like `.dot`, `.ppt,.pptx,.odp`
+    );
+
+FilePickerCross FilePickerCross.save(               // Currently available for desktops using FDE
     type: FileTypeCross.any,                        // Available: `any`, `audio`, `image`, `video`, `custom`. Note: not available using FDE
     fileExtension: ''                               // Only if FileTypeCross.custom . May be any file extension like `.dot`, `.ppt,.pptx,.odp`
     );
@@ -38,6 +45,21 @@ Example:
           } catch (e) {
             _fileString =
                 'Not a text file. Showing base64.\n\n' + filePicker.toBase64();
+          }
+        }));
+```
+
+Example:
+```dart
+    FilePickerCross.save().then((filePicker) => setState(() {
+          _filePath = filePicker.path;
+          try {
+              if (_filePath != "") {
+                File f = File(_filePath);
+                f.writeAsString(_fileString);
+              }
+          } catch (e) {
+            // handle error
           }
         }));
 ```
