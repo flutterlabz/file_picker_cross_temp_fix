@@ -129,9 +129,4 @@ Installation example for Debian-based systems:
 sudo apt-get install libgtk-3-dev pkg-config
 ```
 
-Moreover, you will need to update `main.cc` to include [the GTK initialization and runloop changes
-shown in the `testbed`
-example](https://github.com/google/flutter-desktop-embedding/blob/master/testbed/linux/main.cc#L81-L91).
-
-1. Delete your existing `linux` directory (make sure you know any manual modification you did): `rm -rf linux`
-2. Copy the `linux` subdirectory of this projects's `example/` into your project.
+**Note:** You do no longer have to modify any files unlike in previous versions.
