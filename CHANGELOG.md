@@ -1,3 +1,7 @@
+## 3.1.0
+
+* Added initial support for saving files. Currently, on desktop only.
+
 ## 3.0.0
 
 * Breaking API changes. Please update your code.
