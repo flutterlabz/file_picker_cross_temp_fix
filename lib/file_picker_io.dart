@@ -83,7 +83,6 @@ Future<bool> deleteInternalPath({String path}) async {
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
 Future<List<String>> listFiles({Pattern at, Pattern name}) async {
   final String appPath = await normalizedApplicationDocumentsPath();
-  print(appPath);
   List<String> files =
       await Directory(await normalizedApplicationDocumentsPath())
           .list(recursive: true)
