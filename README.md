@@ -21,59 +21,52 @@ This package was realized using `file_picker` (Mobile platforms and go-flutter) 
 **Note:** *we recently had API changes. Please update your code accordingly.*
 
 ```dart
-FilePickerCross FilePickerCross.pick(
-    type: FileTypeCross.any,                        // Available: `any`, `audio`, `image`, `video`, `custom`. Note: not available using FDE
-    fileExtension: ''                               // Only if FileTypeCross.custom . May be any file extension like `.dot`, `.ppt,.pptx,.odp`
-    );
 
-FilePickerCross FilePickerCross.save(               // Currently available for desktops using FDE
-    type: FileTypeCross.any,                        // Available: `any`, `audio`, `image`, `video`, `custom`. Note: not available using FDE
-    fileExtension: ''                               // Only if FileTypeCross.custom . May be any file extension like `.dot`, `.ppt,.pptx,.odp`
-    );
+// show a dialog to open a file
+FilePickerCross myFile = FilePickerCross FilePickerCross.importFromStorage(
+  type: FileTypeCross.any,       // Available: `any`, `audio`, `image`, `video`, `custom`. Note: not available using FDE
+  fileExtension: '.txt, .md'     // Only if FileTypeCross.custom . May be any file extension like `.dot`, `.ppt,.pptx,.odp`
+);
 
-String toString()
+// save our file to the fictional directory. It is not necessary that it already exists.
+myFile.saveToPath('/my/awesome/folder/' + myFile.fileName);
 
-Uint8List toUint8List()
+// save our file to the internal storage or share to other apps
+myFile.exportToStorage();
 
-String toBase64()
+// list all previously opened files
+List<String> paths = await FilePickerCross.listInternalFiles();
+print(paths);
 
-MultipartFile toMultipartFile({String filename})
+// open an existing file
+FilePickerCross anotherFile = FilePickerCross.fromInternalPath(paths[0]);
 
-int get length
+// delete our perfect file
+FilePickerCross.delete(paths[0]);
 
-String get path // BETA: not working properly using go-flutter
+
+// you can access the following properties on a FilePickerCross instance:
+
+myFile.toString();
+
+myFile.toUint8List();
+
+myFile.toBase64();
+
+myFile.toMultipartFile(filename: 'myFile.txt');
+
+myFile.length;
+
+myFile.path;
+
+myFile.fileName;
+
+myFile.fileExtension;
+
+myFile.directory;
 ```
 
-Example:
-
-```dart
-    FilePickerCross.pick().then((filePicker) => setState(() {
-          _filePath = filePicker.path;
-          _fileLength = filePicker.toUint8List().lengthInBytes;
-          try {
-            _fileString = filePicker.toString();
-          } catch (e) {
-            _fileString =
-                'Not a text file. Showing base64.\n\n' + filePicker.toBase64();
-          }
-        }));
-```
-
-Example:
-
-```dart
-    FilePickerCross.save().then((filePicker) => setState(() {
-          _filePath = filePicker.path;
-          try {
-              if (_filePath != "") {
-                File f = File(_filePath);
-                f.writeAsString(_fileString);
-              }
-          } catch (e) {
-            // handle error
-          }
-        }));
-```
+To get details about the certain properties and methods, check out the [API documentation](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross-class.html).
 
 ### go-flutter and FDE
 

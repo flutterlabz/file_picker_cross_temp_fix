@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share/share.dart';
 
 import 'file_picker_cross.dart';
 import 'file_picker_desktop.dart';
@@ -52,15 +53,20 @@ Future<String> exportToExternalStorage(
   String extension;
   if (fileName.contains('.'))
     extension = fileName.substring(fileName.lastIndexOf('.'));
-  if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
-    throw UnimplementedError(
-        'Saving files is not implemented yet on mobile platforms.');
-  } else {
+  if (Platform.isAndroid || Platform.isIOS) {
+    final String path = (await getTemporaryDirectory()).path + '/' + fileName;
+    await File(path).writeAsBytes(bytes);
+    Share.shareFiles([path]);
+    return fileName;
+  } else if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     String path = await saveFileDesktop(
         fileExtension: extension, suggestedFileName: fileName);
     File file = await File(path).create(recursive: true);
     file = await file.writeAsBytes(bytes);
     return file.path;
+  } else {
+    throw UnimplementedError(
+        'Exporting files is not implemented on your platform.');
   }
 }
 

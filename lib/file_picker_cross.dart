@@ -115,6 +115,7 @@ class FilePickerCross {
 
   /// Returns the file as MultiPartFile for use with tha http package. Useful for file upload in apps.
   http.MultipartFile toMultipartFile({String filename}) {
+    if (filename == null) filename = fileName;
     return http.MultipartFile.fromBytes('file', _bytes,
         contentType: new MediaType('application', 'octet-stream'),
         filename: filename);
