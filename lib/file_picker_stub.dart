@@ -38,3 +38,8 @@ Future<bool> deleteInternalPath({String path}) {
 Future<List<String>> listFiles({Pattern at, Pattern name}) async {
   throw UnimplementedError('Unsupported Platform for file_picker_cross');
 }
+
+/// Dummy implementation throwing an error. Should be overwritten by conditional imports.
+Future<FileQuotaCross> getInternalQuota() async {
+  throw UnimplementedError('Unsupported Platform for file_picker_cross');
+}

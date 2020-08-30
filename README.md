@@ -44,6 +44,8 @@ FilePickerCross anotherFile = FilePickerCross.fromInternalPath(paths[0]);
 // delete our perfect file
 FilePickerCross.delete(paths[0]);
 
+// get the file storage size
+print(await FilePickerCross.quota());
 
 // you can access the following properties on a FilePickerCross instance:
 
@@ -130,11 +132,12 @@ This plugin requires the following libraries:
 
 * GTK 3
 * pkg-config
+* xdg-user-dirs
 
 Installation example for Debian-based systems:
 
 ```shell
-sudo apt-get install libgtk-3-dev pkg-config
+sudo apt-get install libgtk-3-dev pkg-config xdg-user-dirs
 ```
 
 **Note:** You do no longer have to modify any files unlike in previous versions.

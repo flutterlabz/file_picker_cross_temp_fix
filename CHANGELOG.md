@@ -1,3 +1,7 @@
+## 4.1.0
+
+* implemented `FileQuotaCross` to access statistics like quota or usage of the file system
+
 ## 4.0.1
 
 * minor bug fixes

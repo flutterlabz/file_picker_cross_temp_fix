@@ -87,6 +87,11 @@ class FilePickerCross {
     return deleteInternalPath(path: path);
   }
 
+  /// returns the maximally available storage space
+  static Future<FileQuotaCross> quota() {
+    return getInternalQuota();
+  }
+
   /// Export the file to the external storage.
   Future<String> exportToStorage() {
     return exportToExternalStorage(bytes: toUint8List(), fileName: fileName);
@@ -127,3 +132,27 @@ class FilePickerCross {
 
 /// Supported file types
 enum FileTypeCross { image, video, audio, any, custom }
+
+/// represents the storage quota of the [FilePickerCross]
+class FileQuotaCross {
+  /// the maximal number of bytes available for use
+  final int quota;
+
+  /// the current use of storage in bytes
+  final int usage;
+
+  FileQuotaCross({this.quota, this.usage});
+
+  /// the number of bytes free for use
+  int get remaining => quota - usage;
+
+  /// returns the relative share used
+  ///
+  /// 0 if no storage is used; 1 if storage is full
+  double get relative => usage / quota;
+
+  @override
+  String toString() {
+    return 'instance of FileQuotaCross{ quota: $quota, usage: $usage }';
+  }
+}

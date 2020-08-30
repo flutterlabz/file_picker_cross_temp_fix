@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:disk_space/disk_space.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:package_info/package_info.dart';
 import 'package:path_provider/path_provider.dart';
@@ -78,6 +79,15 @@ Future<bool> deleteInternalPath({String path}) async {
         .catchError((e) => false);
   else
     return true;
+}
+
+Future<FileQuotaCross> getInternalQuota() async {
+  double freeSpace = (await DiskSpace.getFreeDiskSpace) * 1e6;
+  double totalSpace = (await DiskSpace.getTotalDiskSpace) * 1e6;
+  print(totalSpace);
+  print(freeSpace);
+  return (FileQuotaCross(
+      quota: totalSpace.round(), usage: (totalSpace - freeSpace).round()));
 }
 
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.

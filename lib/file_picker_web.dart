@@ -80,6 +80,13 @@ Future<bool> deleteInternalPath({String path}) async {
   return true;
 }
 
+Future<FileQuotaCross> getInternalQuota() async {
+  if (!await html.window.navigator.storage.persisted())
+    await html.window.navigator.storage.persist();
+  final quota = await html.window.navigator.storage.estimate();
+  return FileQuotaCross(quota: quota['quota'], usage: quota['usage']);
+}
+
 String _fileTypeToAcceptString(FileTypeCross type, String fileExtension) {
   String accept;
   switch (type) {
@@ -120,5 +127,6 @@ Map<String, List<int>> openLocalFileSystem() {
 }
 
 void saveLocalFileSystem(Map<String, List<int>> fileSystem) {
+  getInternalQuota();
   html.window.localStorage[kLocalStorageKey] = jsonEncode(fileSystem);
 }
