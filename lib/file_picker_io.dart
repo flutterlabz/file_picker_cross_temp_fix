@@ -26,7 +26,7 @@ Future<String> pickSingleFileAsPath(
   if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
     return await saveFileMobile(type: type, fileExtension: fileExtension);
   } else {
-    return await saveFileDesktop(type: type, fileExtension: fileExtension);
+    return await saveFileDesktop(fileExtension: fileExtension);
   }
 }
 
@@ -47,9 +47,21 @@ Future<bool> saveInternalBytes({Uint8List bytes, String path}) async {
 }
 
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
-Future<String> exportToExternalStorage({Uint8List bytes, String fileName}) {
-  /// TODO: implement
-  throw UnimplementedError('Unsupported Platform for file_picker_cross');
+Future<String> exportToExternalStorage(
+    {Uint8List bytes, String fileName}) async {
+  String extension;
+  if (fileName.contains('.'))
+    extension = fileName.substring(fileName.lastIndexOf('.'));
+  if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
+    throw UnimplementedError(
+        'Saving files is not implemented yet on mobile platforms.');
+  } else {
+    String path = await saveFileDesktop(
+        fileExtension: extension, suggestedFileName: fileName);
+    File file = await File(path).create(recursive: true);
+    file = await file.writeAsBytes(bytes);
+    return file.path;
+  }
 }
 
 Future<bool> deleteInternalPath({String path}) async {

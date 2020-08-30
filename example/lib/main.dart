@@ -26,6 +26,8 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+          primaryColor: Colors.blueGrey, accentColor: Colors.lightGreen),
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
@@ -56,13 +58,13 @@ class _MyAppState extends State<MyApp> {
                   ),
             RaisedButton(
               onPressed: _selectFile,
-              child: Text('Select File'),
+              child: Text('Open File...'),
             ),
             (filePickerCross == null)
                 ? Text('Open a file first, to save')
                 : RaisedButton(
                     onPressed: _selectSaveFile,
-                    child: Text('Select File To Save'),
+                    child: Text('Save as...'),
                   ),
             Text(
                 'File path: ${filePickerCross?.path ?? 'unknown'} (Might cause issues on web)\n'),

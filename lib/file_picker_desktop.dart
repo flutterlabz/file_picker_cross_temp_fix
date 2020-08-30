@@ -21,8 +21,9 @@ Future<Map<String, Uint8List>> selectFilesDesktop(
 
 /// Implementation of file selection dialog using file_chooser for desktop platforms
 Future<String> saveFileDesktop(
-    {FileTypeCross type, String fileExtension}) async {
+    {String fileExtension, String suggestedFileName}) async {
   FileChooserResult file = await showSavePanel(
+      suggestedFileName: suggestedFileName,
       allowedFileTypes: (parseExtension(fileExtension) == null)
           ? null
           : [

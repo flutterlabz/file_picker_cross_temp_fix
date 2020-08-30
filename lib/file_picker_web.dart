@@ -41,7 +41,9 @@ Future<String> pickSingleFileAsPath(
 
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
 Future<Uint8List> internalFileByPath({String path}) async {
-  return openLocalFileSystem()[path];
+  Completer<Uint8List> completer = Completer();
+  completer.complete(Uint8List.fromList(openLocalFileSystem()[path]));
+  return completer.future;
 }
 
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
@@ -102,11 +104,18 @@ String _fileTypeToAcceptString(FileTypeCross type, String fileExtension) {
 
 const kLocalStorageKey = 'file_picker_cross_file_system';
 
+/// Opening the json file system and converting it to typed data
 Map<String, List<int>> openLocalFileSystem() {
-  if (html.window.localStorage.containsKey(kLocalStorageKey))
-    return Map<String, List<int>>.from(
+  if (html.window.localStorage.containsKey(kLocalStorageKey)) {
+    Map<String, List> map = Map<String, List>.from(
         jsonDecode(html.window.localStorage[kLocalStorageKey]));
-  else
+
+    Map<String, List<int>> returnMap = {};
+    map.forEach((key, value) {
+      returnMap[key] = List<int>.from(value);
+    });
+    return returnMap;
+  } else
     return {};
 }
 
