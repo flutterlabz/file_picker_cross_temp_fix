@@ -1,3 +1,9 @@
+## 4.0.0
+
+* Implemented an emulated file system with support for the web
+* Implemented saving files internally and externally
+* Created API to import files from local disk into fake filesystem
+
 ## 3.1.0
 
 * Added initial support for saving files. Currently, on desktop only.
