@@ -1,3 +1,7 @@
+## 4.0.1
+
+* minor bug fixes
+
 ## 4.0.0
 
 * Implemented an emulated file system with support for the web

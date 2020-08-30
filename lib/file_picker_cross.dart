@@ -83,7 +83,7 @@ class FilePickerCross {
     return saveInternalBytes(bytes: toUint8List(), path: path);
   }
 
-  Future<bool> delete({String path}) {
+  static Future<bool> delete({String path}) {
     return deleteInternalPath(path: path);
   }
 
