@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:flutter/material.dart';
 
@@ -13,9 +11,17 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _fileString;
-  int _fileLength = 0;
-  String _filePath;
+  FilePickerCross filePickerCross;
+
+  String _fileString = '';
+  Set<String> lastFiles;
+
+  @override
+  void initState() {
+    FilePickerCross.listInternalFiles()
+        .then((value) => setState(() => lastFiles = value.toSet()));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +33,40 @@ class _MyAppState extends State<MyApp> {
         body: ListView(
           padding: EdgeInsets.all(8),
           children: <Widget>[
+            Text(
+              'Last files',
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            (lastFiles == null)
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : ListView.builder(
+                    shrinkWrap: true,
+                    primary: false,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) => ListTile(
+                      leading: Text('$index.'),
+                      title: Text(lastFiles.toList()[index]),
+                      onTap: () async => setFilePicker(
+                          await FilePickerCross.fromInternalPath(
+                              path: lastFiles.toList()[index])),
+                    ),
+                    itemCount: lastFiles.length,
+                  ),
             RaisedButton(
               onPressed: _selectFile,
               child: Text('Select File'),
             ),
-            RaisedButton(
-              onPressed: _selectSaveFile,
-              child: Text('Select File To Save'),
-            ),
-            Text('File path: $_filePath (Might cause issues on web)\n'),
-            Text('File length: $_fileLength\n'),
+            (filePickerCross == null)
+                ? Text('Open a file first, to save')
+                : RaisedButton(
+                    onPressed: _selectSaveFile,
+                    child: Text('Select File To Save'),
+                  ),
+            Text(
+                'File path: ${filePickerCross?.path ?? 'unknown'} (Might cause issues on web)\n'),
+            Text('File length: ${filePickerCross?.length ?? 0}\n'),
             Text('File as String: $_fileString\n'),
           ],
         ),
@@ -45,31 +75,23 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _selectFile() {
-    FilePickerCross.pick().then((filePicker) => setState(() {
-          _filePath = filePicker.path;
-          _fileLength = filePicker.toUint8List().lengthInBytes;
-          try {
-            _fileString = filePicker.toString();
-          } catch (e) {
-            _fileString =
-                'Not a text file. Showing base64.\n\n' + filePicker.toBase64();
-          }
-        }));
+    FilePickerCross.importFromStorage()
+        .then((filePicker) => setFilePicker(filePicker));
   }
 
   void _selectSaveFile() {
-    FilePickerCross.save().then((filePicker) => setState(() {
-          _filePath = filePicker.path;
-          try {
-            if (_filePath != "") {
-              _fileString = 'file content';
-              File f = File(_filePath);
-              f.writeAsString(_fileString);
-            }
-          } catch (e) {
-            _fileString = 'Error writing file. Path: $_filePath';
-          }
-          _fileLength = _fileString.length;
-        }));
+    filePickerCross.exportToStorage();
   }
+
+  setFilePicker(FilePickerCross filePicker) => setState(() {
+        filePickerCross = filePicker;
+        filePickerCross.saveToPath(path: filePickerCross.fileName);
+        lastFiles.add(filePickerCross.fileName);
+        try {
+          _fileString = filePickerCross.toString();
+        } catch (e) {
+          _fileString = 'Not a text file. Showing base64.\n\n' +
+              filePickerCross.toBase64();
+        }
+      });
 }

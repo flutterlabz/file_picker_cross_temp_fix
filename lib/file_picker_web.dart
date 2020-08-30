@@ -35,7 +35,47 @@ Future<Map<String, Uint8List>> selectSingleFileAsBytes(
 /// Implementation of file selection dialog for the web
 Future<String> pickSingleFileAsPath(
     {FileTypeCross type, String fileExtension}) async {
+  /// TODO: implement
   throw UnimplementedError('Unsupported Platform for file_picker_cross');
+}
+
+/// Dummy implementation throwing an error. Should be overwritten by conditional imports.
+Future<Uint8List> internalFileByPath({String path}) async {
+  return openLocalFileSystem()[path];
+}
+
+/// Dummy implementation throwing an error. Should be overwritten by conditional imports.
+Future<bool> saveInternalBytes({Uint8List bytes, String path}) async {
+  final fs = openLocalFileSystem();
+  fs[path] = bytes;
+  saveLocalFileSystem(fs);
+  return true;
+}
+
+/// Dummy implementation throwing an error. Should be overwritten by conditional imports.
+Future<String> exportToExternalStorage(
+    {Uint8List bytes, String fileName}) async {
+  html.AnchorElement link =
+      html.AnchorElement(href: 'data:,base64,' + base64Encode(bytes))
+        ..download = fileName;
+  link.click();
+  return (fileName);
+}
+
+/// Dummy implementation throwing an error. Should be overwritten by conditional imports.
+Future<List<String>> listFiles({Pattern at, Pattern name}) async {
+  Iterable<String> fs = openLocalFileSystem().keys.toList();
+  if (at != null) fs = fs.where((element) => element.startsWith(at));
+  if (name != null) fs = fs.where((element) => element.endsWith(name));
+  return fs;
+}
+
+/// Dummy implementation throwing an error. Should be overwritten by conditional imports.
+Future<bool> deleteInternalPath({String path}) async {
+  final fs = openLocalFileSystem();
+  fs.remove(path);
+  saveLocalFileSystem(fs);
+  return true;
 }
 
 String _fileTypeToAcceptString(FileTypeCross type, String fileExtension) {
@@ -58,4 +98,18 @@ String _fileTypeToAcceptString(FileTypeCross type, String fileExtension) {
       break;
   }
   return accept;
+}
+
+const kLocalStorageKey = 'file_picker_cross_file_system';
+
+Map<String, List<int>> openLocalFileSystem() {
+  if (html.window.localStorage.containsKey(kLocalStorageKey))
+    return Map<String, List<int>>.from(
+        jsonDecode(html.window.localStorage[kLocalStorageKey]));
+  else
+    return {};
+}
+
+void saveLocalFileSystem(Map<String, List<int>> fileSystem) {
+  html.window.localStorage[kLocalStorageKey] = jsonEncode(fileSystem);
 }

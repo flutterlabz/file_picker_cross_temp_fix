@@ -2,10 +2,13 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:file_chooser/file_chooser.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:package_info/package_info.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'file_picker_cross.dart';
+import 'file_picker_desktop.dart';
+import 'file_picker_mobile.dart';
 
 /// Implementation of file selection dialog delegating to platform-specific implementations
 Future<Map<String, Uint8List>> selectSingleFileAsBytes(
@@ -27,60 +30,50 @@ Future<String> pickSingleFileAsPath(
   }
 }
 
-/// Implementation of file selection dialog using file_chooser for desktop platforms
-Future<Map<String, Uint8List>> selectFilesDesktop(
-    {FileTypeCross type, String fileExtension}) async {
-  FileChooserResult file = await showOpenPanel(
-      allowedFileTypes: (parseExtension(fileExtension) == null)
-          ? null
-          : [
-              FileTypeFilterGroup(
-                  label: 'files', fileExtensions: parseExtension(fileExtension))
-            ]);
-  String path = file.paths[0];
-  return {path: await _readFileByte(path)};
+/// Dummy implementation throwing an error. Should be overwritten by conditional imports.
+Future<Uint8List> internalFileByPath({String path}) async {
+  return fileByPath(await normalizedApplicationDocumentsPath() + path)
+      .readAsBytes();
 }
 
-/// Implementation of file selection dialog using file_chooser for desktop platforms
-Future<String> saveFileDesktop(
-    {FileTypeCross type, String fileExtension}) async {
-  FileChooserResult file = await showSavePanel(
-      allowedFileTypes: (parseExtension(fileExtension) == null)
-          ? null
-          : [
-              FileTypeFilterGroup(
-                  label: 'files', fileExtensions: parseExtension(fileExtension))
-            ]);
-  String path = file.paths.isEmpty ? "" : file.paths[0];
-  return path;
+/// Dummy implementation throwing an error. Should be overwritten by conditional imports.
+Future<bool> saveInternalBytes({Uint8List bytes, String path}) async {
+  File file = fileByPath(await normalizedApplicationDocumentsPath() + path);
+  file.createSync(recursive: true);
+  return file
+      .writeAsBytes(bytes)
+      .then((value) => true)
+      .catchError((e) => false);
 }
 
-Future<Uint8List> _readFileByte(String filePath) async {
-  Uri myUri = Platform.isWindows
-      ? Uri.file(filePath, windows: true)
-      : Uri.parse(filePath);
-  File audioFile = new File.fromUri(myUri);
-  Uint8List bytes;
-  await audioFile.readAsBytes().then((value) {
-    bytes = Uint8List.fromList(value);
-  }).catchError((onError) {
-    print('Exception Error while reading file from path:' + onError.toString());
-  });
-  return bytes;
-}
-
-/// Implementation of file selection dialog using file_picker for mobile platforms
-Future<Map<String, Uint8List>> selectFilesMobile(
-    {FileTypeCross type, String fileExtension}) async {
-  File file = await FilePicker.getFile(
-      type: _fileTypeCrossParse(type),
-      allowedExtensions: parseExtension(fileExtension));
-  return {file.path: file.readAsBytesSync()};
-}
-
-Future<String> saveFileMobile(
-    {FileTypeCross type, String fileExtension}) async {
+/// Dummy implementation throwing an error. Should be overwritten by conditional imports.
+Future<String> exportToExternalStorage({Uint8List bytes, String fileName}) {
+  /// TODO: implement
   throw UnimplementedError('Unsupported Platform for file_picker_cross');
+}
+
+Future<bool> deleteInternalPath({String path}) async {
+  if (await fileByPath(path).exists())
+    return fileByPath(path)
+        .delete()
+        .then((value) => true)
+        .catchError((e) => false);
+  else
+    return true;
+}
+
+/// Dummy implementation throwing an error. Should be overwritten by conditional imports.
+Future<List<String>> listFiles({Pattern at, Pattern name}) async {
+  final String appPath = await normalizedApplicationDocumentsPath();
+  print(appPath);
+  List<String> files =
+      await Directory(await normalizedApplicationDocumentsPath())
+          .list(recursive: true)
+          .map((event) => '/' + event.path.replaceFirst(appPath, ''))
+          .toList();
+  if (at != null) files = files.where((element) => element.startsWith(at));
+  if (name != null) files = files.where((element) => element.endsWith(name));
+  return files;
 }
 
 /// Parsing various valid HTML/JS file type declarations into valid ones for file_picker
@@ -91,7 +84,7 @@ dynamic parseExtension(String fileExtension) {
       : null;
 }
 
-FileType _fileTypeCrossParse(FileTypeCross type) {
+FileType fileTypeCrossParse(FileTypeCross type) {
   FileType accept;
   switch (type) {
     case FileTypeCross.any:
@@ -112,3 +105,23 @@ FileType _fileTypeCrossParse(FileTypeCross type) {
   }
   return accept;
 }
+
+/// Returns a [String] containing the path of a directory which is both readable and writable. If it was not created yet, it is created.
+Future<String> normalizedApplicationDocumentsPath() async {
+  String directoryPath;
+
+  /// unfortunately, Windows is not yet supported by [path_provider]. See https://github.com/flutter/flutter/issues/41715 for more details.
+  if (Platform.isWindows) {
+    directoryPath = Directory(
+            r'%LOCALAPPDATA%\' + (await PackageInfo.fromPlatform()).appName)
+        .path;
+  } else
+    directoryPath = (await getApplicationDocumentsDirectory()).path;
+  String path = (directoryPath.replaceAll(r'\', r'/') + '/file_picker_cross/')
+      .replaceAll(r'//', '/');
+  if (!await Directory(path).exists())
+    Directory(path).createSync(recursive: true);
+  return path;
+}
+
+File fileByPath(String path) => File.fromUri(Uri.file(path));
