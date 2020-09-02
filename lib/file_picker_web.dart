@@ -32,6 +32,38 @@ Future<Map<String, Uint8List>> selectSingleFileAsBytes(
   return loadEnded.future;
 }
 
+/// Implementation of file selection dialog for multiple files using dart:html for the web
+Future<Map<String, Uint8List>> selectMultipleFilesAsBytes(
+    {FileTypeCross type, String fileExtension}) {
+  Completer<Map<String, Uint8List>> loadEnded = Completer();
+
+  String accept = _fileTypeToAcceptString(type, fileExtension);
+  html.InputElement uploadInput = html.FileUploadInputElement();
+  uploadInput.draggable = true;
+  uploadInput.accept = accept;
+  uploadInput.multiple = true;
+  uploadInput.click();
+
+  uploadInput.onChange.listen((e) {
+    final files = uploadInput.files;
+    int counter = 0;
+    final reader = new html.FileReader();
+
+    Map<String, Uint8List> fileBytes = {};
+
+    reader.onLoadEnd.listen((e) {
+      fileBytes[uploadInput.value.replaceAll('\\', '/')] =
+          Base64Decoder().convert(reader.result.toString().split(",").last);
+      counter++;
+      if (counter >= files.length) loadEnded.complete(fileBytes);
+    });
+    files.forEach((element) {
+      reader.readAsDataUrl(element);
+    });
+  });
+  return loadEnded.future;
+}
+
 /// Implementation of file selection dialog for the web
 Future<String> pickSingleFileAsPath(
     {FileTypeCross type, String fileExtension}) async {

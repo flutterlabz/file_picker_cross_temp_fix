@@ -19,6 +19,24 @@ Future<Map<String, Uint8List>> selectFilesDesktop(
   return {path: await fileByPath(path).readAsBytes()};
 }
 
+/// Implementation of file selection dialog for multiple files using file_chooser for desktop platforms
+Future<Map<String, Uint8List>> selectMultipleFilesDesktop(
+    {FileTypeCross type, String fileExtension}) async {
+  FileChooserResult chooserResult = await showOpenPanel(
+      allowsMultipleSelection: true,
+      allowedFileTypes: (parseExtension(fileExtension) == null)
+          ? null
+          : [
+              FileTypeFilterGroup(
+                  label: 'files', fileExtensions: parseExtension(fileExtension))
+            ]);
+  Map<String, Uint8List> fileBytes = {};
+  chooserResult.paths.forEach((path) async {
+    fileBytes[path] = await fileByPath(path).readAsBytes();
+  });
+  return fileBytes;
+}
+
 /// Implementation of file selection dialog using file_chooser for desktop platforms
 Future<String> saveFileDesktop(
     {String fileExtension, String suggestedFileName}) async {
