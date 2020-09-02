@@ -23,7 +23,7 @@ This package was realized using `file_picker` (Mobile platforms and go-flutter) 
 ```dart
 
 // show a dialog to open a file
-FilePickerCross myFile = FilePickerCross FilePickerCross.importFromStorage(
+FilePickerCross myFile = await FilePickerCross.importFromStorage(
   type: FileTypeCross.any,       // Available: `any`, `audio`, `image`, `video`, `custom`. Note: not available using FDE
   fileExtension: '.txt, .md'     // Only if FileTypeCross.custom . May be any file extension like `.dot`, `.ppt,.pptx,.odp`
 );
@@ -33,6 +33,9 @@ myFile.saveToPath('/my/awesome/folder/' + myFile.fileName);
 
 // save our file to the internal storage or share to other apps
 myFile.exportToStorage();
+
+List<FilePickerCross> myMultipleFiles = await FilePickerCross.importMultipleFromStorage();
+print(myMultipleFiles);
 
 // list all previously opened files
 List<String> paths = await FilePickerCross.listInternalFiles();
