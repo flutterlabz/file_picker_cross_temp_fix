@@ -1,3 +1,7 @@
+## 4.2.0
+
+* Added option to select multiple files by using `FilePickerCross.importMultipleFromStorage()`
+
 ## 4.1.1
 
 * Fixed of by one error when getting file name
