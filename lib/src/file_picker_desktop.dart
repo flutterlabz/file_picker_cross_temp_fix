@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:file_chooser/file_chooser.dart';
+import 'package:file_picker_cross/file_picker_cross.dart';
 
-import 'file_picker_cross.dart';
 import 'file_picker_io.dart';
 
 /// Implementation of file selection dialog using file_chooser for desktop platforms

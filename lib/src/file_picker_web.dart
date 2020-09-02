@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:html' as html;
 import 'dart:typed_data';
 
-import 'file_picker_cross.dart';
+import '../file_picker_cross.dart';
 
 /// Implementation of file selection dialog using dart:html for the web
 Future<Map<String, Uint8List>> selectSingleFileAsBytes(

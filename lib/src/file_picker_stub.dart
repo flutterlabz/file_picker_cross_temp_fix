@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'file_picker_cross.dart';
+import '../file_picker_cross.dart';
 
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
 Future<Map<String, Uint8List>> selectSingleFileAsBytes(

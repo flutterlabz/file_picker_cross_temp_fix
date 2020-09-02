@@ -4,11 +4,11 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 
-import 'file_picker_stub.dart'
+import 'src/file_picker_stub.dart'
 // ignore: uri_does_not_exist
-    if (dart.library.io) 'file_picker_io.dart'
+    if (dart.library.io) 'src/file_picker_io.dart'
 // ignore: uri_does_not_exist
-    if (dart.library.html) 'file_picker_web.dart';
+    if (dart.library.html) 'src/file_picker_web.dart';
 
 /// FilePickerCross allows you to select files on any of Flutters platforms.
 class FilePickerCross {
