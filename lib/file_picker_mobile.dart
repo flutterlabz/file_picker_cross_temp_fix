@@ -22,8 +22,8 @@ Future<Map<String, Uint8List>> selectMultipleFilesMobile(
       type: fileTypeCrossParse(type),
       allowedExtensions: parseExtension(fileExtension));
   Map<String, Uint8List> filesMap = {};
-  files.forEach((element) {
-    filesMap[element.path] = element.readAsBytesSync();
+  files.forEach((file) {
+    filesMap[file.path] = file.readAsBytesSync();
   });
   return filesMap;
 }

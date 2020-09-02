@@ -23,6 +23,18 @@ Future<Map<String, Uint8List>> selectSingleFileAsBytes(
 }
 
 /// Implementation of file selection dialog delegating to platform-specific implementations
+Future<Map<String, Uint8List>> selectMultipleFilesAsBytes(
+    {FileTypeCross type, String fileExtension}) async {
+  if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
+    return await selectMultipleFilesMobile(
+        type: type, fileExtension: fileExtension);
+  } else {
+    return await selectMultipleFilesDesktop(
+        type: type, fileExtension: fileExtension);
+  }
+}
+
+/// Implementation of file selection dialog delegating to platform-specific implementations
 Future<String> pickSingleFileAsPath(
     {FileTypeCross type, String fileExtension}) async {
   if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {

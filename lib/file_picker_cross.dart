@@ -48,6 +48,21 @@ class FilePickerCross {
         path: _path, fileExtension: fileExtension, type: type);
   }
 
+  static Future<List<FilePickerCross>> importMultipleFromStorage(
+      {FileTypeCross type = FileTypeCross.any,
+      String fileExtension = ''}) async {
+    final Map<String, Uint8List> files = await selectMultipleFilesAsBytes(
+        type: type, fileExtension: fileExtension);
+
+    if (files.isEmpty) throw (NullThrownError());
+    List<FilePickerCross> filePickers = [];
+    files.forEach((path, file) {
+      filePickers.add(FilePickerCross(file,
+          path: path, fileExtension: fileExtension, type: type));
+    });
+    return filePickers;
+  }
+
   /// Deprecated. Use [saveToPath] or [exportToStorage] instead.
   @deprecated
   static Future<FilePickerCross> save(

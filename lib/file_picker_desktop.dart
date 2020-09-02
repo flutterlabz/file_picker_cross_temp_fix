@@ -31,8 +31,8 @@ Future<Map<String, Uint8List>> selectMultipleFilesDesktop(
                   label: 'files', fileExtensions: parseExtension(fileExtension))
             ]);
   Map<String, Uint8List> fileBytes = {};
-  chooserResult.paths.forEach((path) async {
-    fileBytes[path] = await fileByPath(path).readAsBytes();
+  chooserResult.paths.forEach((path) {
+    fileBytes[path] = fileByPath(path).readAsBytesSync();
   });
   return fileBytes;
 }

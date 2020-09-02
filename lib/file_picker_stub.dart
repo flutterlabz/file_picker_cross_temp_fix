@@ -9,6 +9,12 @@ Future<Map<String, Uint8List>> selectSingleFileAsBytes(
 }
 
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
+Future<Map<String, Uint8List>> selectMultipleFilesAsBytes(
+    {FileTypeCross type, String fileExtension}) async {
+  throw UnimplementedError('Unsupported Platform for file_picker_cross');
+}
+
+/// Dummy implementation throwing an error. Should be overwritten by conditional imports.
 Future<String> pickSingleFileAsPath(
     {FileTypeCross type, String fileExtension}) async {
   throw UnimplementedError('Unsupported Platform for file_picker_cross');
