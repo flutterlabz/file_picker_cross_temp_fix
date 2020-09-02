@@ -1,3 +1,7 @@
+## 4.1.1
+
+* Fixed of by one error when getting file name
+
 ## 4.1.0
 
 * implemented `FileQuotaCross` to access statistics like quota or usage of the file system
