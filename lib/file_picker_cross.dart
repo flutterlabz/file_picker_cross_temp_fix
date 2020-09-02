@@ -115,7 +115,7 @@ class FilePickerCross {
   /// Returns the name of the file. This typically is the part of the path after the last `/` or `\`.
   String get fileName {
     final parsedPath = '/' + path.replaceAll(r'\', r'/');
-    return parsedPath.substring(parsedPath.lastIndexOf('/'));
+    return parsedPath.substring(parsedPath.lastIndexOf('/') + 1);
   }
 
   /// Returns the directory the file is located in. This it typically everything before the last `/` or `\`.
