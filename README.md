@@ -73,6 +73,38 @@ myFile.directory;
 
 To get details about the certain properties and methods, check out the [API documentation](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross-class.html).
 
+### A word on directories
+
+**Why is isn't it possible to pick directories?** That's what we are asked commonly. There is a simple reason: mobile and web device's security mechanisms.
+
+Anyway, there are two workarounds available, depending on what you plan to do.
+
+If you have plenty of files, you simply need to store somewhere, you may use our provided `saveToPath('/my/path')` API. This allows you to save any file to an app-internal path. See the [API documentation](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross/saveToPath.html) for further details.
+
+Another use case is saving files to a user-defined directory. For single files, you may use the `exportToStorage()` API ([documentation](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross/exportToStorage.html)). But if you want to *once* pick a directory and save continuously save and read files there, it will generally be impossible on most devices except of desktops. All other device types prevent this by their security mechanisms. **On desktops** (and unfortunately *only* on desktops), there is a workaround available:
+
+```dart
+// for the first file, you show an export as dialog
+FilePickerCross myFile = ...
+
+String pathForExports = await myFile.exportToStorage(); // <- will return the file's path on desktops
+
+// you parse the file's directory and use it for later automated exports.
+pathForExports = pathForExports.substring(0,pathForExports.lastIndexOf(r'/'));
+print(pathForExports);
+
+// now save the path for later use using shared preferences etc.
+...
+
+// next time, check whether you are overwriting an existing file or simply write the file
+print(await File(pathForExports+'/myNextFile.csv').exists());
+File myCsvFile = await File(pathForExports+'/myNextFile.csv').writeAsString('comma,separated,values'); // <- This only works on desktops. All other devices prevent this.
+```
+
+*(Source: [Issue #11](https://gitlab.com/testapp-system/file_picker_cross/-/issues/11#note_406443054))*
+
+Moreover, we plan to support direct write access on certain shared storage locations of the device like Documents, Downloads etc. Our plans on that as well as the API are not ready yet but you might expect this to be supported.
+
 ### go-flutter and FDE
 
 Flutter initially only supported Android and iOS. To add support for desktop platforms, some people started the [go-flutter](https://github.com/go-flutter-desktop/go-flutter) providing Flutter applications on Windows, Linux and macOS using the Go language.
