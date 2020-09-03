@@ -1,22 +1,10 @@
 # file_picker_cross
 
-> The only Flutter plugin to select, open, choose or pick documents, images videos or other files on Android, iOS, the desktop and the web for reading, writing, use as String, byte list or HTTP uploads.
-
-## The scope of this package
-
-**TL;DR:** *We provide a parallel, platform-independent implementation of a fake file system, in which you can create, open and save files for your app - even on the web. Moreover, we provide APIs to interact with the **real** file system as well to import and export files from and to your device.*
-
-It is very difficult to handle files in cross platform apps. While desktops have one files system used for all apps, mobile platforms have isolated file systems for each app. The web does not really have a working file system available on all browsers. Hence, it is hard to implement storage and access to files on all platforms - and you do not have to because we already did this for you.
-
-With `file_picker_cross`, we provide a fake file system for use in your app. Unlike other packages, we do not only provide a dialog for reading or saving files, but we provide a whole file system *inside* your app's storage, in which you can use any operation like searching files, opening them and saving them. Of cause, there are APIs too for importing files from the shared storage (device storage, home folder, etc.) or exporting to these - even on the web.
+> The only Flutter plugin to select, open, choose, pick and create documents, images videos or other files on Android, iOS, the desktop and the web for reading, writing, use as String, byte list or HTTP uploads.
 
 ## Getting Started
 
-`file_picker_cross` allows you to select files from your device and is compatible with Android, iOS, Desktops (using both go-flutter or FDE) and the web.
-
-It also supports picking a file path for saving/export. This functionality is currently only available on Desktops.
-
-This package was realized using `file_picker` (Mobile platforms and go-flutter) and 'file_chooser' (Desktops). We only added compatibility to the web and mixed everything.
+`file_picker_cross` allows you to select, edit and save files from your device and is compatible with Android, iOS, Desktops (using both go-flutter or FDE) and the web.
 
 **Note:** *we recently had API changes. Please update your code accordingly.*
 
@@ -72,6 +60,14 @@ myFile.directory;
 ```
 
 To get details about the certain properties and methods, check out the [API documentation](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross-class.html).
+
+## The scope of this package
+
+**TL;DR:** *We provide a parallel, platform-independent implementation of a fake file system, in which you can create, open and save files for your app - even on the web. Moreover, we provide APIs to interact with the **real** file system as well to import and export files from and to your device.*
+
+It is very difficult to handle files in cross platform apps. While desktops have one files system used for all apps, mobile platforms have isolated file systems for each app. The web does not really have a working file system available on all browsers. Hence, it is hard to implement storage and access to files on all platforms - and you do not have to because we already did this for you.
+
+With `file_picker_cross`, we provide a fake file system for use in your app. Unlike other packages, we do not only provide a dialog for reading or saving files, but we provide a whole file system *inside* your app's storage, in which you can use any operation like searching files, opening them and saving them. Of cause, there are APIs too for importing files from the shared storage (device storage, home folder, etc.) or exporting to these - even on the web.
 
 ### A word on directories
 
@@ -135,7 +131,7 @@ flutter config --enable-windows-desktop
 
 #### More information
 
-[Set up go-flutter](https://hover.build/) [Set up FDE](https://flutter.dev/desktop)
+[Set up go-flutter](https://hover.build/) or [Set up FDE](https://flutter.dev/desktop)
 
 ### Mobile platforms
 
