@@ -58,9 +58,11 @@ class _MyAppState extends State<MyApp> {
                     ),
                     itemCount: lastFiles.length,
                   ),
-            RaisedButton(
-              onPressed: _selectFile,
-              child: Text('Open File...'),
+            Builder(
+              builder: (context) => RaisedButton(
+                onPressed: () => _selectFile(context),
+                child: Text('Open File...'),
+              ),
             ),
             (filePickerCross == null)
                 ? Text('Open a file first, to save')
@@ -90,9 +92,13 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  void _selectFile() {
-    FilePickerCross.importFromStorage()
-        .then((filePicker) => setFilePicker(filePicker));
+  void _selectFile(context) {
+    FilePickerCross.importMultipleFromStorage().then((filePicker) {
+      setFilePicker(filePicker[0]);
+      Scaffold.of(context).showSnackBar(SnackBar(
+        content: Text('You selected ${filePicker.length} file(s).'),
+      ));
+    });
   }
 
   void _selectSaveFile() {
@@ -103,7 +109,6 @@ class _MyAppState extends State<MyApp> {
         filePickerCross = filePicker;
         filePickerCross.saveToPath(path: filePickerCross.fileName);
         FilePickerCross.quota().then((value) {
-          print(value);
           setState(() => quota = value);
         });
         lastFiles.add(filePickerCross.fileName);

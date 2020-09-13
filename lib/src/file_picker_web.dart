@@ -47,18 +47,19 @@ Future<Map<String, Uint8List>> selectMultipleFilesAsBytes(
   uploadInput.onChange.listen((e) {
     final files = uploadInput.files;
     int counter = 0;
-    final reader = new html.FileReader();
 
     Map<String, Uint8List> fileBytes = {};
 
-    reader.onLoadEnd.listen((e) {
-      fileBytes[uploadInput.value.replaceAll('\\', '/')] =
-          Base64Decoder().convert(reader.result.toString().split(",").last);
-      counter++;
-      if (counter >= files.length) loadEnded.complete(fileBytes);
-    });
-    files.forEach((element) {
-      reader.readAsDataUrl(element);
+    files.forEach((currentFile) {
+      final reader = new html.FileReader();
+      reader.onLoadEnd.listen((e) {
+        fileBytes[(currentFile.relativePath + '/' + currentFile.name)
+                .replaceAll('\\', '/')] =
+            Base64Decoder().convert(reader.result.toString().split(",").last);
+        counter++;
+        if (counter >= files.length) loadEnded.complete(fileBytes);
+      });
+      reader.readAsDataUrl(currentFile);
     });
   });
   return loadEnded.future;
@@ -67,7 +68,7 @@ Future<Map<String, Uint8List>> selectMultipleFilesAsBytes(
 /// Implementation of file selection dialog for the web
 Future<String> pickSingleFileAsPath(
     {FileTypeCross type, String fileExtension}) async {
-  /// TODO: implement
+  /// TODO: implement using NativeFileSystem API
   throw UnimplementedError('Unsupported Platform for file_picker_cross');
 }
 
@@ -113,8 +114,12 @@ Future<bool> deleteInternalPath({String path}) async {
 }
 
 Future<FileQuotaCross> getInternalQuota() async {
-  if (!await html.window.navigator.storage.persisted())
-    await html.window.navigator.storage.persist();
+  try {
+    if (!await html.window.navigator.storage.persisted())
+      await html.window.navigator.storage.persist();
+  } catch (e) {
+    print('Persistent storage not supported. Using default storage instead.');
+  }
   final quota = await html.window.navigator.storage.estimate();
   return FileQuotaCross(quota: quota['quota'], usage: quota['usage']);
 }

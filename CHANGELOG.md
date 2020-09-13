@@ -1,3 +1,8 @@
+## 4.2.2
+
+* Fixed selection of multiple files on web
+* Fixed determination of quota on older web devices
+
 ## 4.2.0
 
 * Added option to select multiple files by using `FilePickerCross.importMultipleFromStorage()`
