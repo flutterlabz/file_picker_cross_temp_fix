@@ -1,3 +1,7 @@
+## 4.2.4
+
+* Fixed incompatibility on mobile devices
+
 ## 4.2.3
 
 * Added custom errors
