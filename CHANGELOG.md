@@ -1,3 +1,7 @@
+## 4.2.3
+
+* Added custom errors
+
 ## 4.2.2
 
 * Fixed selection of multiple files on web
