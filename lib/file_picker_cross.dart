@@ -34,33 +34,46 @@ class FilePickerCross {
       importFromStorage(type: type, fileExtension: fileExtension);
 
   /// Shows a dialog for selecting a file from your device's internal storage.
+  /// If thee selected file is a [Null] byte, a  [NullThrownError] is thrown.
+  /// If the file selection was canceled by the user, a  [FileSelectionCanceledError]
+  /// is thrown.
   static Future<FilePickerCross> importFromStorage(
       {FileTypeCross type = FileTypeCross.any,
       String fileExtension = ''}) async {
-    final Map<String, Uint8List> file =
-        await selectSingleFileAsBytes(type: type, fileExtension: fileExtension);
+    try {
+      final Map<String, Uint8List> file = await selectSingleFileAsBytes(
+          type: type, fileExtension: fileExtension);
 
-    String _path = file.keys.toList()[0];
-    Uint8List _bytes = file[_path];
+      String _path = file.keys.toList()[0];
+      Uint8List _bytes = file[_path];
 
-    if (_bytes == null) throw (NullThrownError());
-    return FilePickerCross(_bytes,
-        path: _path, fileExtension: fileExtension, type: type);
+      if (_bytes == null) throw (NullThrownError());
+      return FilePickerCross(_bytes,
+          path: _path, fileExtension: fileExtension, type: type);
+    } catch (e) {
+      throw FileSelectionCanceledError();
+    }
   }
 
+  /// Imports multiple files into your application. See [importFromStorage]
+  /// for further details.
   static Future<List<FilePickerCross>> importMultipleFromStorage(
       {FileTypeCross type = FileTypeCross.any,
       String fileExtension = ''}) async {
-    final Map<String, Uint8List> files = await selectMultipleFilesAsBytes(
-        type: type, fileExtension: fileExtension);
+    try {
+      final Map<String, Uint8List> files = await selectMultipleFilesAsBytes(
+          type: type, fileExtension: fileExtension);
 
-    if (files.isEmpty) throw (NullThrownError());
-    List<FilePickerCross> filePickers = [];
-    files.forEach((path, file) {
-      filePickers.add(FilePickerCross(file,
-          path: path, fileExtension: fileExtension, type: type));
-    });
-    return filePickers;
+      if (files.isEmpty) throw (NullThrownError());
+      List<FilePickerCross> filePickers = [];
+      files.forEach((path, file) {
+        filePickers.add(FilePickerCross(file,
+            path: path, fileExtension: fileExtension, type: type));
+      });
+      return filePickers;
+    } catch (e) {
+      throw FileSelectionCanceledError();
+    }
   }
 
   /// Deprecated. Use [saveToPath] or [exportToStorage] instead.
@@ -98,6 +111,7 @@ class FilePickerCross {
     return saveInternalBytes(bytes: toUint8List(), path: path);
   }
 
+  /// finally deletes a file stored in the ggiven path of your application's fake filesystem
   static Future<bool> delete({String path}) {
     return deleteInternalPath(path: path);
   }
@@ -108,6 +122,8 @@ class FilePickerCross {
   }
 
   /// Export the file to the external storage.
+  /// This shows a file dialog allowing to select the file name and location and
+  /// will return the finally selected, absolute path to the file.
   Future<String> exportToStorage() {
     return exportToExternalStorage(bytes: toUint8List(), fileName: fileName);
   }
@@ -119,6 +135,8 @@ class FilePickerCross {
   }
 
   /// Returns the directory the file is located in. This it typically everything before the last `/` or `\`.
+  /// *Note:* Even on Windows and web platforms, where file paths are typically presented using `\` instead
+  /// of `/`, the path's single directories are separated using `/`.
   String get directory {
     final parsedPath = '/' + path.replaceAll(r'\', r'/');
     return parsedPath.substring(0, parsedPath.lastIndexOf('/'));
@@ -170,4 +188,9 @@ class FileQuotaCross {
   String toString() {
     return 'instance of FileQuotaCross{ quota: $quota, usage: $usage }';
   }
+}
+
+/// [Exception] if the selection oof a file was canceled
+class FileSelectionCanceledError implements Exception {
+  FileSelectionCanceledError();
 }

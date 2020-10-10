@@ -149,14 +149,19 @@ FileType fileTypeCrossParse(FileTypeCross type) {
 Future<String> normalizedApplicationDocumentsPath() async {
   String directoryPath;
 
+  String appName;
+  try {
+    appName = (await PackageInfo.fromPlatform()).appName;
+  } catch (e) {
+    appName = 'file_picker_cross';
+  }
+
   /// unfortunately, Windows is not yet supported by [path_provider]. See https://github.com/flutter/flutter/issues/41715 for more details.
   if (Platform.isWindows) {
-    directoryPath = Directory(
-            r'%LOCALAPPDATA%\' + (await PackageInfo.fromPlatform()).appName)
-        .path;
+    directoryPath = Directory(r'%LOCALAPPDATA%\' + appName).path;
   } else
     directoryPath = (await getApplicationDocumentsDirectory()).path;
-  String path = (directoryPath.replaceAll(r'\', r'/') + '/file_picker_cross/')
+  String path = (directoryPath.replaceAll(r'\', r'/') + '/$appName/')
       .replaceAll(r'//', '/');
   if (!await Directory(path).exists())
     Directory(path).createSync(recursive: true);

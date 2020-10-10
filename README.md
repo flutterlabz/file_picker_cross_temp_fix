@@ -69,6 +69,13 @@ It is very difficult to handle files in cross platform apps. While desktops have
 
 With `file_picker_cross`, we provide a fake file system for use in your app. Unlike other packages, we do not only provide a dialog for reading or saving files, but we provide a whole file system *inside* your app's storage, in which you can use any operation like searching files, opening them and saving them. Of cause, there are APIs too for importing files from the shared storage (device storage, home folder, etc.) or exporting to these - even on the web.
 
+### Where files are saved
+
+There are two important methods to export/save files: [`exportToStorage`](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross/exportToStorage.html) and [`saveToPath`](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross/saveToPath.html).
+
+- `exportToStorage` shows a dialog and allows the user to **select** where to save the file.
+- `saveToPath` is meant for automated saving in case files are automatically created by an application for further use only **within** the application. For the web, it means, files are stored in the localStorage, on Windows, the path is `%LOCALAPPDATA%\your_app_name\` and on all other platforms the files are stored in `${getApplicationDocumentsDirectory()}/your_app_name/`.
+
 ### A word on directories
 
 **Why is isn't it possible to pick directories?** That's what we are asked commonly. There is a simple reason: mobile and web device's security mechanisms.
