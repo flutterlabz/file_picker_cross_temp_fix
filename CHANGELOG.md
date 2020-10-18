@@ -1,3 +1,7 @@
+## 4.2.5
+
+* Fixed null byte errors on mobile
+
 ## 4.2.4
 
 * Fixed incompatibility on mobile devices
