@@ -1,3 +1,7 @@
+## 4.2.6
+
+* Fixed general errors during file selection on Desktops
+
 ## 4.2.5
 
 * Fixed null byte errors on mobile
