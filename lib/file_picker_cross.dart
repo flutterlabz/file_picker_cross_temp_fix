@@ -63,7 +63,6 @@ class FilePickerCross {
     try {
       final Map<String, Uint8List> files = await selectMultipleFilesAsBytes(
           type: type, fileExtension: fileExtension);
-
       if (files.isEmpty) throw (NullThrownError());
       List<FilePickerCross> filePickers = [];
       files.forEach((path, file) {

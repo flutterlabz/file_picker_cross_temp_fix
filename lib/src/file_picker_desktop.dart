@@ -8,13 +8,12 @@ import 'file_picker_io.dart';
 /// Implementation of file selection dialog using file_chooser for desktop platforms
 Future<Map<String, Uint8List>> selectFilesDesktop(
     {FileTypeCross type, String fileExtension}) async {
-  FileChooserResult file = await showOpenPanel(
-      allowedFileTypes: (parseExtension(fileExtension) == null)
-          ? null
-          : [
-              FileTypeFilterGroup(
-                  label: 'files', fileExtensions: parseExtension(fileExtension))
-            ]);
+  FileChooserResult file = await ((parseExtension(fileExtension) == null)
+      ? showOpenPanel()
+      : showOpenPanel(allowedFileTypes: [
+          FileTypeFilterGroup(
+              label: 'files', fileExtensions: parseExtension(fileExtension))
+        ]));
   String path = file.paths[0];
   return {path: await fileByPath(path).readAsBytes()};
 }
@@ -22,14 +21,16 @@ Future<Map<String, Uint8List>> selectFilesDesktop(
 /// Implementation of file selection dialog for multiple files using file_chooser for desktop platforms
 Future<Map<String, Uint8List>> selectMultipleFilesDesktop(
     {FileTypeCross type, String fileExtension}) async {
-  FileChooserResult chooserResult = await showOpenPanel(
-      allowsMultipleSelection: true,
-      allowedFileTypes: (parseExtension(fileExtension) == null)
-          ? null
-          : [
+  FileChooserResult chooserResult =
+      await ((parseExtension(fileExtension) == null)
+          ? showOpenPanel(
+              allowsMultipleSelection: true,
+            )
+          : showOpenPanel(allowsMultipleSelection: true, allowedFileTypes: [
               FileTypeFilterGroup(
                   label: 'files', fileExtensions: parseExtension(fileExtension))
-            ]);
+            ]));
+  print(chooserResult);
   Map<String, Uint8List> fileBytes = {};
   chooserResult.paths.forEach((path) {
     fileBytes[path] = fileByPath(path).readAsBytesSync();
