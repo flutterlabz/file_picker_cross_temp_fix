@@ -91,7 +91,7 @@ Future<bool> saveInternalBytes({Uint8List bytes, String path}) async {
 Future<String> exportToExternalStorage(
     {Uint8List bytes, String fileName}) async {
   html.AnchorElement link =
-      html.AnchorElement(href: 'data:,base64,' + base64Encode(bytes))
+      html.AnchorElement(href: Uri.dataFromBytes(bytes).toString())
         ..download = fileName;
   link.click();
   return (fileName);
