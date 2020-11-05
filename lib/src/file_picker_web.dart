@@ -22,12 +22,10 @@ Future<Map<String, Uint8List>> selectSingleFileAsBytes(
     final reader = new html.FileReader();
 
     reader.onLoadEnd.listen((e) {
-      loadEnded.complete({
-        uploadInput.value.replaceAll('\\', '/'):
-            Base64Decoder().convert(reader.result.toString().split(",").last)
-      });
+      loadEnded
+          .complete({uploadInput.value.replaceAll('\\', '/'): reader.result});
     });
-    reader.readAsDataUrl(file);
+    reader.readAsArrayBuffer(file);
   });
   return loadEnded.future;
 }
@@ -54,12 +52,11 @@ Future<Map<String, Uint8List>> selectMultipleFilesAsBytes(
       final reader = new html.FileReader();
       reader.onLoadEnd.listen((e) {
         fileBytes[(currentFile.relativePath + '/' + currentFile.name)
-                .replaceAll('\\', '/')] =
-            Base64Decoder().convert(reader.result.toString().split(",").last);
+            .replaceAll('\\', '/')] = reader.result;
         counter++;
         if (counter >= files.length) loadEnded.complete(fileBytes);
       });
-      reader.readAsDataUrl(currentFile);
+      reader.readAsArrayBuffer(currentFile);
     });
   });
   return loadEnded.future;
