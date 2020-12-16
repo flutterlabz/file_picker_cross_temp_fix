@@ -13,7 +13,7 @@
 // show a dialog to open a file
 FilePickerCross myFile = await FilePickerCross.importFromStorage(
   type: FileTypeCross.any,       // Available: `any`, `audio`, `image`, `video`, `custom`. Note: not available using FDE
-  fileExtension: '.txt, .md'     // Only if FileTypeCross.custom . May be any file extension like `.dot`, `.ppt,.pptx,.odp`
+  fileExtension: 'txt, md'     // Only if FileTypeCross.custom . May be any file extension like `dot`, `ppt,pptx,odp`
 );
 
 // save our file to the fictional directory. It is not necessary that it already exists.
