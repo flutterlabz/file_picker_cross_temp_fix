@@ -87,9 +87,10 @@ Future<bool> saveInternalBytes({Uint8List bytes, String path}) async {
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
 Future<String> exportToExternalStorage(
     {Uint8List bytes, String fileName}) async {
-  html.AnchorElement link =
-      html.AnchorElement(href: Uri.dataFromBytes(bytes).toString())
-        ..download = fileName;
+  html.AnchorElement link = html.AnchorElement(
+      href: html.Url.createObjectUrlFromBlob(
+          html.Blob([bytes], 'application/octet-stream')))
+    ..download = fileName;
   link.click();
   return (fileName);
 }
