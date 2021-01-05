@@ -1,3 +1,7 @@
+## 4.2.7
+
+* Fixed implementation of save file dialog on desktop platforms requiring leading dots to be doubled
+
 ## 4.2.6
 
 * Fixed general errors during file selection on Desktops
