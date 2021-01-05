@@ -118,7 +118,11 @@ Future<List<String>> listFiles({Pattern at, Pattern name}) async {
 /// Parsing various valid HTML/JS file type declarations into valid ones for file_picker
 dynamic parseExtension(String fileExtension) {
   return (fileExtension != null &&
-          fileExtension.replaceAll(',', '').trim().isNotEmpty)
+          fileExtension
+              .replaceAll(',', '')
+              .trim()
+              .replaceFirst('.', '') // removing leading `.`
+              .isNotEmpty)
       ? fileExtension.split(',').map<String>((e) => e.trim()).toList()
       : null;
 }
