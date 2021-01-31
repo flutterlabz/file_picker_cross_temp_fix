@@ -96,8 +96,6 @@ Future<bool> deleteInternalPath({String path}) async {
 Future<FileQuotaCross> getInternalQuota() async {
   double freeSpace = (await DiskSpace.getFreeDiskSpace) * 1e6;
   double totalSpace = (await DiskSpace.getTotalDiskSpace) * 1e6;
-  print(totalSpace);
-  print(freeSpace);
   return (FileQuotaCross(
       quota: totalSpace.round(), usage: (totalSpace - freeSpace).round()));
 }
