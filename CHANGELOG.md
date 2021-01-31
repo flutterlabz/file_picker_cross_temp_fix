@@ -1,3 +1,7 @@
+## 4.2.9
+
+* Removed noisy output
+
 ## 4.2.8
 
 * Updated dependencies
