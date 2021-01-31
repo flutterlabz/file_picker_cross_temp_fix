@@ -121,7 +121,7 @@ dynamic parseExtension(String fileExtension) {
           fileExtension
               .replaceAll(',', '')
               .trim()
-              .replaceFirst('.', '') // removing leading `.`
+              .replaceAll('.', '') // removing leading `.`
               .isNotEmpty)
       ? fileExtension.split(',').map<String>((e) => e.trim()).toList()
       : null;
