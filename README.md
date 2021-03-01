@@ -61,6 +61,33 @@ myFile.directory;
 
 To get details about the certain properties and methods, check out the [API documentation](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross-class.html).
 
+## Exception handling
+
+Different platforms will throw different exceptions whether it is due to user action or platform restrictions. For instance, you may want to know if a user had denied access to storage and act upon it. There is a method to help out with that.
+
+```dart
+await FilePickerCross.importFromStorage().then(() {
+  // ...
+}).onError((error, _) {
+  String _exceptionData = error.reason();
+  print('----------------------');
+  print('REASON: ${_exceptionData}');
+  if (_exceptionData == 'read_external_storage_denied') {
+    print('Permission was denied');
+  } else if (_exceptionData == 'selection_canceled') {
+    print('User canceled operation');
+  } 
+  print('----------------------');
+});
+```
+
+When the `FileSelectionCanceledError` exception is thrown, you can access the `reason()` method to collect underlying exception information. It has a return type of `String`.
+
+Behavior:
+- On user cancelation, `selection_canceled` is returned
+- When `PlatformException` exception occurs, the raw error value is extracted and then returned (i.e. `read_external_storage_denied`)
+- As a fallback, exceptions that were not 'handled' will be returned in full
+
 ## The scope of this package
 
 **TL;DR:** *We provide a parallel, platform-independent implementation of a fake file system, in which you can create, open and save files for your app - even on the web. Moreover, we provide APIs to interact with the **real** file system as well to import and export files from and to your device.*
