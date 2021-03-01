@@ -51,7 +51,7 @@ class FilePickerCross {
       return FilePickerCross(_bytes,
           path: _path, fileExtension: fileExtension, type: type);
     } catch (e) {
-      throw FileSelectionCanceledError();
+      throw FileSelectionCanceledError(e);
     }
   }
 
@@ -71,7 +71,7 @@ class FilePickerCross {
       });
       return filePickers;
     } catch (e) {
-      throw FileSelectionCanceledError();
+      throw FileSelectionCanceledError(e);
     }
   }
 
@@ -191,5 +191,83 @@ class FileQuotaCross {
 
 /// [Exception] if the selection oof a file was canceled
 class FileSelectionCanceledError implements Exception {
-  FileSelectionCanceledError();
+  var _msg;
+  var platformError;
+
+  FileSelectionCanceledError([var msg = '']) {
+    this._msg = msg;
+  }
+
+  // Helps developer collect specific exception
+  // reasoning to act up-on
+  String reason() {
+
+    String _err = _msg.toString();
+
+    // Provide PlatformException specific messages
+    String _platformError() {
+      String _reasonCollector = '';
+
+      // Access data from first parameter
+      _reasonCollector = _err.split(':')[1];
+      _reasonCollector = _reasonCollector.split('(')[1];
+      _reasonCollector = _reasonCollector.split(',')[0];
+
+      return _reasonCollector;
+    }
+
+    // List of known exceptions to handle
+    String _methodMap(String exceptionType) {
+      String _reasonCollector;
+
+      switch(exceptionType) {
+        case 'RangeError (index)': {
+          _reasonCollector = 'selection_canceled';
+        }
+        break;
+
+        case 'NoSuchMethodError': {
+          _reasonCollector = 'selection_canceled';
+        }
+        break;
+
+        case 'PlatformException': {
+          _reasonCollector = _platformError();
+        }
+        break;
+
+        default: {
+          _reasonCollector = '';
+        }
+        break;
+      }
+
+      return _reasonCollector;
+    }
+
+    String _reasonResult = '';
+    String _exception = '';
+    String _methodData;
+
+    // Patch string with different format before processing
+    if (_err.substring(0, 17) == 'PlatformException') {
+      _err = _err.split('(')[0] + ': (' + _err.split('(')[1];
+    }
+
+    // Get exception type
+    _exception = _err.split(':')[0];
+    _methodData = _methodMap(_exception);
+
+    // Check if exception is handled, otherwise fallback to verbose
+    if (_methodData != '') {
+      _reasonResult = _methodData;
+    } else {
+      _reasonResult = _msg;
+    }
+
+    return _reasonResult;
+  }
+
+  @override
+  String toString() => 'FileSelectionCanceledError: $_msg';
 }
