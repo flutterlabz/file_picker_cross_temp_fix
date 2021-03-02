@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -123,8 +124,14 @@ class FilePickerCross {
   /// Export the file to the external storage.
   /// This shows a file dialog allowing to select the file name and location and
   /// will return the finally selected, absolute path to the file.
-  Future<String> exportToStorage() {
-    return exportToExternalStorage(bytes: toUint8List(), fileName: fileName);
+  Future<String> exportToStorage(
+      {String subject, String text, Rect sharePositionOrigin}) {
+    return exportToExternalStorage(
+        bytes: toUint8List(),
+        fileName: fileName,
+        subject: subject,
+        text: text,
+        sharePositionOrigin: sharePositionOrigin);
   }
 
   /// Returns the name of the file. This typically is the part of the path after the last `/` or `\`.
