@@ -24,8 +24,12 @@ class FilePickerCross {
 
   final Uint8List _bytes;
 
-  FilePickerCross(this._bytes,
-      {this.path, this.type = FileTypeCross.any, this.fileExtension = ''});
+  FilePickerCross(
+    this._bytes, {
+    required this.path,
+    this.type = FileTypeCross.any,
+    this.fileExtension = '',
+  });
 
   /// Deprecated. Use [importFromStorage] instead
   @deprecated
@@ -38,17 +42,22 @@ class FilePickerCross {
   /// If thee selected file is a [Null] byte, a  [NullThrownError] is thrown.
   /// If the file selection was canceled by the user, a  [FileSelectionCanceledError]
   /// is thrown.
-  static Future<FilePickerCross> importFromStorage(
-      {FileTypeCross type = FileTypeCross.any,
-      String fileExtension = ''}) async {
+  static Future<FilePickerCross> importFromStorage({
+    FileTypeCross type = FileTypeCross.any,
+    String fileExtension = '',
+  }) async {
     try {
       final Map<String, Uint8List> file = await selectSingleFileAsBytes(
-          type: type, fileExtension: fileExtension);
+        type: type,
+        fileExtension: fileExtension,
+      );
 
       String _path = file.keys.toList()[0];
-      Uint8List _bytes = file[_path];
+      Uint8List? _bytes = file[_path];
 
-      if (_bytes == null) throw (NullThrownError());
+      if (_bytes == null) {
+        throw (NullThrownError());
+      }
       return FilePickerCross(_bytes,
           path: _path, fileExtension: fileExtension, type: type);
     } catch (e) {
@@ -58,18 +67,32 @@ class FilePickerCross {
 
   /// Imports multiple files into your application. See [importFromStorage]
   /// for further details.
-  static Future<List<FilePickerCross>> importMultipleFromStorage(
-      {FileTypeCross type = FileTypeCross.any,
-      String fileExtension = ''}) async {
+  static Future<List<FilePickerCross>> importMultipleFromStorage({
+    FileTypeCross type = FileTypeCross.any,
+    String fileExtension = '',
+  }) async {
     try {
       final Map<String, Uint8List> files = await selectMultipleFilesAsBytes(
-          type: type, fileExtension: fileExtension);
-      if (files.isEmpty) throw (NullThrownError());
+        type: type,
+        fileExtension: fileExtension,
+      );
+
+      if (files.isEmpty) {
+        throw (NullThrownError());
+      }
+
       List<FilePickerCross> filePickers = [];
       files.forEach((path, file) {
-        filePickers.add(FilePickerCross(file,
-            path: path, fileExtension: fileExtension, type: type));
+        filePickers.add(
+          FilePickerCross(
+            file,
+            path: path,
+            fileExtension: fileExtension,
+            type: type,
+          ),
+        );
       });
+
       return filePickers;
     } catch (e) {
       throw FileSelectionCanceledError(e);
@@ -78,28 +101,37 @@ class FilePickerCross {
 
   /// Deprecated. Use [saveToPath] or [exportToStorage] instead.
   @deprecated
-  static Future<FilePickerCross> save(
-      {FileTypeCross type = FileTypeCross.any,
-      String fileExtension = ''}) async {
+  static Future<FilePickerCross> save({
+    FileTypeCross type = FileTypeCross.any,
+    String fileExtension = '',
+  }) async {
     final String path =
         await pickSingleFileAsPath(type: type, fileExtension: fileExtension);
 
-    return FilePickerCross(null,
+    return FilePickerCross(Uint8List(0),
         path: path, fileExtension: fileExtension, type: type);
   }
 
   /// Lists all internal files inside the app's internal memory
-  static Future<List<String>> listInternalFiles({Pattern at, Pattern name}) {
+  static Future<List<String>> listInternalFiles({
+    Pattern? at,
+    Pattern? name,
+  }) {
     return listFiles(at: at, name: name);
   }
 
   /// Creates a [FilePickerCross] from a local path.
   /// This does **not** allow you to open a file from the local storage but only a file previously saved by [saveToPath].
   /// If you want to open the file to the shared, local memory, use [importFromStorage] instead.
-  static Future<FilePickerCross> fromInternalPath({String path}) async {
-    final Uint8List file = await internalFileByPath(path: path);
+  static Future<FilePickerCross> fromInternalPath({
+    required String path,
+  }) async {
+    final Uint8List? file = await internalFileByPath(path: path);
 
-    if (file == null) throw (NullThrownError());
+    if (file == null) {
+      throw (NullThrownError());
+    }
+
     return FilePickerCross(file, path: path);
   }
 
@@ -107,12 +139,16 @@ class FilePickerCross {
   /// This does **not** allow you to save the file to the device's public storage like `Documents`, `Downloads`
   /// or `Photos` but saves the [FilePickerCross] in an **app specific**, internal folder for later access by *this app only*. To export a file to
   /// the local storage, use [exportToStorage] instead.
-  Future<bool> saveToPath({String path}) {
+  Future<bool> saveToPath({
+    required String path,
+  }) {
     return saveInternalBytes(bytes: toUint8List(), path: path);
   }
 
-  /// finally deletes a file stored in the ggiven path of your application's fake filesystem
-  static Future<bool> delete({String path}) {
+  /// finally deletes a file stored in the given path of your application's fake filesystem
+  static Future<bool> delete({
+    required String path,
+  }) {
     return deleteInternalPath(path: path);
   }
 
@@ -132,14 +168,18 @@ class FilePickerCross {
   /// origin rect for the share sheet to popover from on iPads. It has no effect
   /// on non-iPads.
   ///
-  Future<String> exportToStorage(
-      {String subject, String text, Rect sharePositionOrigin}) {
+  Future<String> exportToStorage({
+    String? subject,
+    String? text,
+    Rect? sharePositionOrigin,
+  }) {
     return exportToExternalStorage(
-        bytes: toUint8List(),
-        fileName: fileName,
-        subject: subject,
-        text: text,
-        sharePositionOrigin: sharePositionOrigin);
+      bytes: toUint8List(),
+      fileName: fileName,
+      subject: subject,
+      text: text,
+      sharePositionOrigin: sharePositionOrigin,
+    );
   }
 
   /// Returns the name of the file. This typically is the part of the path after the last `/` or `\`.
@@ -166,11 +206,17 @@ class FilePickerCross {
   String toBase64() => base64.encode(_bytes);
 
   /// Returns the file as MultiPartFile for use with tha http package. Useful for file upload in apps.
-  http.MultipartFile toMultipartFile({String filename}) {
-    if (filename == null) filename = fileName;
-    return http.MultipartFile.fromBytes('file', _bytes,
-        contentType: new MediaType('application', 'octet-stream'),
-        filename: filename);
+  http.MultipartFile toMultipartFile({String? filename}) {
+    if (filename == null) {
+      filename = fileName;
+    }
+
+    return http.MultipartFile.fromBytes(
+      'file',
+      _bytes,
+      contentType: new MediaType('application', 'octet-stream'),
+      filename: filename,
+    );
   }
 
   /// Returns the file's length in bytes
@@ -188,7 +234,10 @@ class FileQuotaCross {
   /// the current use of storage in bytes
   final int usage;
 
-  FileQuotaCross({this.quota, this.usage});
+  FileQuotaCross({
+    required this.quota,
+    required this.usage,
+  });
 
   /// the number of bytes free for use
   int get remaining => quota - usage;
@@ -216,7 +265,6 @@ class FileSelectionCanceledError implements Exception {
   // Helps developer collect specific exception
   // reasoning to act up-on
   String reason() {
-
     String _err = _msg.toString();
 
     // Provide PlatformException specific messages
@@ -235,26 +283,30 @@ class FileSelectionCanceledError implements Exception {
     String _methodMap(String exceptionType) {
       String _reasonCollector;
 
-      switch(exceptionType) {
-        case 'RangeError (index)': {
-          _reasonCollector = 'selection_canceled';
-        }
-        break;
+      switch (exceptionType) {
+        case 'RangeError (index)':
+          {
+            _reasonCollector = 'selection_canceled';
+          }
+          break;
 
-        case 'NoSuchMethodError': {
-          _reasonCollector = 'selection_canceled';
-        }
-        break;
+        case 'NoSuchMethodError':
+          {
+            _reasonCollector = 'selection_canceled';
+          }
+          break;
 
-        case 'PlatformException': {
-          _reasonCollector = _platformError();
-        }
-        break;
+        case 'PlatformException':
+          {
+            _reasonCollector = _platformError();
+          }
+          break;
 
-        default: {
-          _reasonCollector = '';
-        }
-        break;
+        default:
+          {
+            _reasonCollector = '';
+          }
+          break;
       }
 
       return _reasonCollector;
