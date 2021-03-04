@@ -3,7 +3,10 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
 
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:disk_space/disk_space.dart';
+
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:file_picker/file_picker.dart';
 import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:package_info/package_info.dart';
@@ -14,8 +17,10 @@ import 'file_picker_desktop.dart';
 import 'file_picker_mobile.dart';
 
 /// Implementation of file selection dialog delegating to platform-specific implementations
-Future<Map<String, Uint8List>> selectSingleFileAsBytes(
-    {FileTypeCross type, String fileExtension}) async {
+Future<Map<String, Uint8List>> selectSingleFileAsBytes({
+  required FileTypeCross type,
+  required String fileExtension,
+}) async {
   if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
     return await selectFilesMobile(type: type, fileExtension: fileExtension);
   } else {
@@ -24,8 +29,10 @@ Future<Map<String, Uint8List>> selectSingleFileAsBytes(
 }
 
 /// Implementation of file selection dialog delegating to platform-specific implementations
-Future<Map<String, Uint8List>> selectMultipleFilesAsBytes(
-    {FileTypeCross type, String fileExtension}) async {
+Future<Map<String, Uint8List>> selectMultipleFilesAsBytes({
+  required FileTypeCross type,
+  required String fileExtension,
+}) async {
   if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
     return await selectMultipleFilesMobile(
         type: type, fileExtension: fileExtension);
@@ -36,8 +43,10 @@ Future<Map<String, Uint8List>> selectMultipleFilesAsBytes(
 }
 
 /// Implementation of file selection dialog delegating to platform-specific implementations
-Future<String> pickSingleFileAsPath(
-    {FileTypeCross type, String fileExtension}) async {
+Future<String> pickSingleFileAsPath({
+  required FileTypeCross type,
+  required String fileExtension,
+}) async {
   if (Platform.isAndroid || Platform.isIOS || Platform.isFuchsia) {
     return await saveFileMobile(type: type, fileExtension: fileExtension);
   } else {
@@ -46,13 +55,18 @@ Future<String> pickSingleFileAsPath(
 }
 
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
-Future<Uint8List> internalFileByPath({String path}) async {
+Future<Uint8List> internalFileByPath({
+  required String path,
+}) async {
   return fileByPath(await normalizedApplicationDocumentsPath() + path)
       .readAsBytes();
 }
 
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
-Future<bool> saveInternalBytes({Uint8List bytes, String path}) async {
+Future<bool> saveInternalBytes({
+  required Uint8List bytes,
+  required String path,
+}) async {
   File file = fileByPath(await normalizedApplicationDocumentsPath() + path);
   file.createSync(recursive: true);
   return file
@@ -63,28 +77,40 @@ Future<bool> saveInternalBytes({Uint8List bytes, String path}) async {
 
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
 Future<String> exportToExternalStorage({
-    Uint8List bytes,
-    String fileName,
-    String subject,
-    String text,
-    Rect sharePositionOrigin,
-  }) async {
-  String extension;
-  if (fileName.contains('.'))
+  required Uint8List bytes,
+  required String fileName,
+  String? subject,
+  String? text,
+  Rect? sharePositionOrigin,
+}) async {
+  String extension = '.txt';
+
+  if (fileName.contains('.')) {
     extension = fileName.substring(fileName.lastIndexOf('.'));
+  }
+
   if (Platform.isAndroid || Platform.isIOS) {
     final String path = (await getTemporaryDirectory()).path + '/' + fileName;
+
     await File(path).writeAsBytes(bytes);
-    Share.shareFiles([path],
-        subject: subject,
-        text: text,
-        sharePositionOrigin: sharePositionOrigin);
+
+    Share.shareFiles(
+      [path],
+      subject: subject,
+      text: text,
+      sharePositionOrigin: sharePositionOrigin,
+    );
+
     return fileName;
   } else if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
     String path = await saveFileDesktop(
-        fileExtension: extension, suggestedFileName: fileName);
+      fileExtension: extension,
+      suggestedFileName: fileName,
+    );
+
     File file = await File(path).create(recursive: true);
     file = await file.writeAsBytes(bytes);
+
     return file.path;
   } else {
     throw UnimplementedError(
@@ -92,7 +118,9 @@ Future<String> exportToExternalStorage({
   }
 }
 
-Future<bool> deleteInternalPath({String path}) async {
+Future<bool> deleteInternalPath({
+  required String path,
+}) async {
   if (await fileByPath(path).exists())
     return fileByPath(path)
         .delete()
@@ -110,26 +138,34 @@ Future<FileQuotaCross> getInternalQuota() async {
 }
 
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
-Future<List<String>> listFiles({Pattern at, Pattern name}) async {
+Future<List<String>> listFiles({
+  Pattern? at,
+  Pattern? name,
+}) async {
   final String appPath = await normalizedApplicationDocumentsPath();
+
   List<String> files =
       await Directory(await normalizedApplicationDocumentsPath())
           .list(recursive: true)
           .map((event) => '/' + event.path.replaceFirst(appPath, ''))
           .toList();
-  if (at != null) files = files.where((element) => element.startsWith(at));
-  if (name != null) files = files.where((element) => element.endsWith(name));
+
+  if (at != null) {
+    files = files.where((element) => element.startsWith(at)).toList();
+  }
+  if (name != null) {
+    files = files.where((element) => element.lastIndexOf(name) >= 0).toList();
+  }
   return files;
 }
 
 /// Parsing various valid HTML/JS file type declarations into valid ones for file_picker
 dynamic parseExtension(String fileExtension) {
-  return (fileExtension != null &&
-          fileExtension
-              .replaceAll(',', '')
-              .trim()
-              .replaceAll('.', '') // removing leading `.`
-              .isNotEmpty)
+  return (fileExtension
+          .replaceAll(',', '')
+          .trim()
+          .replaceAll('.', '') // removing leading `.`
+          .isNotEmpty)
       ? fileExtension.split(',').map<String>((e) => e.trim()).toList()
       : null;
 }
