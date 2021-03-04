@@ -124,6 +124,14 @@ class FilePickerCross {
   /// Export the file to the external storage.
   /// This shows a file dialog allowing to select the file name and location and
   /// will return the finally selected, absolute path to the file.
+  ///
+  /// The optional [subject] parameter can be used to populate a subject if the
+  /// user chooses to send an email on Android or iOS.
+  ///
+  /// The optional [sharePositionOrigin] parameter can be used to specify a global
+  /// origin rect for the share sheet to popover from on iPads. It has no effect
+  /// on non-iPads.
+  ///
   Future<String> exportToStorage(
       {String subject, String text, Rect sharePositionOrigin}) {
     return exportToExternalStorage(
