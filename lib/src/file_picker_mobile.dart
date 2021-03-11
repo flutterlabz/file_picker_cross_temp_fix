@@ -36,9 +36,11 @@ Future<Map<String, Uint8List>> selectMultipleFilesMobile({
   // FilePickerResult files = f!;
 
   Map<String, Uint8List> filesMap = {};
-  files?.paths.forEach((path) {
-    filesMap[path] = File(path).readAsBytesSync();
-  });
+  if (files is FilePickerResult) {
+    files.paths.forEach((path) {
+      filesMap[path!] = File(path).readAsBytesSync();
+    });
+  }
 
   return filesMap;
 }
