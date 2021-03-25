@@ -200,7 +200,7 @@ Future<String> normalizedApplicationDocumentsPath() async {
   try {
     appName = (await PackageInfo.fromPlatform()).appName;
   } catch (e) {
-    appName = 'file_picker_cross';
+    appName = 'file_picker_cross_temp_fix';
   }
 
   /// unfortunately, Windows is not yet supported by [path_provider]. See https://github.com/flutter/flutter/issues/41715 for more details.

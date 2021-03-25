@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:html' as html;
 import 'dart:typed_data';
-import 'dart:ui';
 
 import '../file_picker_cross.dart';
 
@@ -74,7 +73,7 @@ Future<String> pickSingleFileAsPath({
   required String fileExtension,
 }) async {
   /// TODO: implement using NativeFileSystem API
-  throw UnimplementedError('Unsupported Platform for file_picker_cross');
+  throw UnimplementedError('Unsupported Platform for file_picker_cross_temp_fix');
 }
 
 /// Dummy implementation throwing an error. Should be overwritten by conditional imports.
@@ -173,7 +172,7 @@ String _fileTypeToAcceptString(FileTypeCross type, String fileExtension) {
   return accept;
 }
 
-const kLocalStorageKey = 'file_picker_cross_file_system';
+const kLocalStorageKey = 'file_picker_cross_temp_fix_file_system';
 
 /// Opening the json file system and converting it to typed data
 Map<String, List<int>> openLocalFileSystem() {

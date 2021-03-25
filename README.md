@@ -1,10 +1,10 @@
-# file_picker_cross
+# file_picker_cross_temp_fix
 
 > The only Flutter plugin to select, open, choose, pick and create documents, images videos or other files on Android, iOS, the desktop and the web for reading, writing, use as String, byte list or HTTP uploads.
 
 ## Getting Started
 
-`file_picker_cross` allows you to select, edit and save files from your device and is compatible with Android, iOS, Desktops (using both go-flutter or FDE) and the web.
+`file_picker_cross_temp_fix` allows you to select, edit and save files from your device and is compatible with Android, iOS, Desktops (using both go-flutter or FDE) and the web.
 
 **Note:** *we recently had API changes. Please update your code accordingly.*
 
@@ -73,7 +73,7 @@ myFile.fileExtension;
 myFile.directory;
 ```
 
-To get details about the certain properties and methods, check out the [API documentation](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross-class.html).
+To get details about the certain properties and methods, check out the [API documentation](https://pub.dev/documentation/file_picker_cross_temp_fix/latest/file_picker_cross_temp_fix/FilePickerCross-class.html).
 
 ## Exception handling
 
@@ -108,11 +108,11 @@ Behavior:
 
 It is very difficult to handle files in cross platform apps. While desktops have one files system used for all apps, mobile platforms have isolated file systems for each app. The web does not really have a working file system available on all browsers. Hence, it is hard to implement storage and access to files on all platforms - and you do not have to because we already did this for you.
 
-With `file_picker_cross`, we provide a fake file system for use in your app. Unlike other packages, we do not only provide a dialog for reading or saving files, but we provide a whole file system *inside* your app's storage, in which you can use any operation like searching files, opening them and saving them. Of cause, there are APIs too for importing files from the shared storage (device storage, home folder, etc.) or exporting to these - even on the web.
+With `file_picker_cross_temp_fix`, we provide a fake file system for use in your app. Unlike other packages, we do not only provide a dialog for reading or saving files, but we provide a whole file system *inside* your app's storage, in which you can use any operation like searching files, opening them and saving them. Of cause, there are APIs too for importing files from the shared storage (device storage, home folder, etc.) or exporting to these - even on the web.
 
 ### Where files are saved
 
-There are two important methods to export/save files: [`exportToStorage`](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross/exportToStorage.html) and [`saveToPath`](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross/saveToPath.html).
+There are two important methods to export/save files: [`exportToStorage`](https://pub.dev/documentation/file_picker_cross_temp_fix/latest/file_picker_cross_temp_fix/FilePickerCross/exportToStorage.html) and [`saveToPath`](https://pub.dev/documentation/file_picker_cross_temp_fix/latest/file_picker_cross_temp_fix/FilePickerCross/saveToPath.html).
 
 - `exportToStorage` shows a dialog and allows the user to **select** where to save the file.
 - `saveToPath` is meant for automated saving in case files are automatically created by an application for further use only **within** the application. For the web, it means, files are stored in the localStorage, on Windows, the path is `%LOCALAPPDATA%\your_app_name\` and on all other platforms the files are stored in `${getApplicationDocumentsDirectory()}/your_app_name/`.
@@ -123,9 +123,9 @@ There are two important methods to export/save files: [`exportToStorage`](https:
 
 Anyway, there are two workarounds available, depending on what you plan to do.
 
-If you have plenty of files, you simply need to store somewhere, you may use our provided `saveToPath('/my/path')` API. This allows you to save any file to an app-internal path. See the [API documentation](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross/saveToPath.html) for further details.
+If you have plenty of files, you simply need to store somewhere, you may use our provided `saveToPath('/my/path')` API. This allows you to save any file to an app-internal path. See the [API documentation](https://pub.dev/documentation/file_picker_cross_temp_fix/latest/file_picker_cross_temp_fix/FilePickerCross/saveToPath.html) for further details.
 
-Another use case is saving files to a user-defined directory. For single files, you may use the `exportToStorage()` API ([documentation](https://pub.dev/documentation/file_picker_cross/latest/file_picker_cross/FilePickerCross/exportToStorage.html)). But if you want to *once* pick a directory and save continuously save and read files there, it will generally be impossible on most devices except of desktops. All other device types prevent this by their security mechanisms. **On desktops** (and unfortunately *only* on desktops), there is a workaround available:
+Another use case is saving files to a user-defined directory. For single files, you may use the `exportToStorage()` API ([documentation](https://pub.dev/documentation/file_picker_cross_temp_fix/latest/file_picker_cross_temp_fix/FilePickerCross/exportToStorage.html)). But if you want to *once* pick a directory and save continuously save and read files there, it will generally be impossible on most devices except of desktops. All other device types prevent this by their security mechanisms. **On desktops** (and unfortunately *only* on desktops), there is a workaround available:
 
 ```dart
 // for the first file, you show an export as dialog
@@ -145,7 +145,7 @@ print(await File(pathForExports+'/myNextFile.csv').exists());
 File myCsvFile = await File(pathForExports+'/myNextFile.csv').writeAsString('comma,separated,values'); // <- This only works on desktops. All other devices prevent this.
 ```
 
-*(Source: [Issue #11](https://gitlab.com/testapp-system/file_picker_cross/-/issues/11#note_406443054))*
+*(Source: [Issue #11](https://gitlab.com/testapp-system/file_picker_cross_temp_fix/-/issues/11#note_406443054))*
 
 Moreover, we plan to support direct write access on certain shared storage locations of the device like Documents, Downloads etc. Our plans on that as well as the API are not ready yet but you might expect this to be supported.
 
